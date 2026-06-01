@@ -164,9 +164,9 @@
       "description": "A certificate stored in Azure Key Vault is expiring within 30 days and does not have auto-renewal configured. CIS 8.5 requires that expiration dates are monitored and certificates are renewed before expiry to prevent service outages and broken authentication flows."
     },
     "AZ-NET-014": {
-      "control_id": "6.4",
-      "control_name": "Ensure that Azure Firewall is enabled on Virtual Networks",
-      "description": "VNet peering connections with allowGatewayTransit or useRemoteGateways enabled allow traffic to route between network segments through shared gateways. This can break network segmentation and enable lateral movement between zones that should remain isolated. Peering connections should be reviewed and gateway transit disabled unless explicitly required and documented."
+      "control_id": "9.2",
+      "control_name": "Ensure that Network Security Groups have rules configured",
+      "description": "VNet peering connections with allowGatewayTransit or useRemoteGateways enabled allow traffic to route between network segments through shared gateways, bypassing network boundary controls. CIS 9.2 requires that network access controls are explicitly configured. Gateway transit on peering connections should be disabled unless explicitly required and documented."
     }
   }
-}
+}  

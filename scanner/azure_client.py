@@ -93,14 +93,10 @@ class AzureClient:
             policy = client.management_policies.get(
                 resource_group, account_name, "default"
             )
-            # A policy shell can exist with an empty rules list —
-            # treat that the same as no policy (non-compliant).
             rules = getattr(getattr(policy, "policy", None), "rules", None)
             return bool(rules)
 
         except ResourceNotFoundError:
-            # Expected path: the account genuinely has no lifecycle policy.
-            # This is the non-compliant condition — return False to flag it.
             logger.debug(
                 "get_storage_lifecycle_policy(%s): ResourceNotFound — no policy",
                 account_name,
@@ -108,9 +104,6 @@ class AzureClient:
             return False
 
         except HttpResponseError as exc:
-            # 403 = service principal lacks
-            # Microsoft.Storage/storageAccounts/managementPolicies/read.
-            # Return None — cannot determine compliance, do not flag.
             logger.error(
                 "get_storage_lifecycle_policy(%s) HTTP %s — "
                 "check service principal permissions: %s",
@@ -121,8 +114,6 @@ class AzureClient:
             return None
 
         except Exception as exc:
-            # Unexpected failure (network, SDK bug, etc.).
-            # Return None — skip rather than create a false positive.
             logger.error(
                 "get_storage_lifecycle_policy(%s) unexpected error: %s",
                 account_name,
@@ -247,15 +238,6 @@ class AzureClient:
             return list(client.public_ip_addresses.list_all())
         except Exception as exc:
             logger.error("get_public_ip_addresses failed: %s", exc)
-            return []
-
-    def get_azure_firewalls(self, resource_group: str) -> List[Any]:
-        """List all Azure Firewalls in a resource group."""
-        try:
-            client = NetworkManagementClient(self.credential, self.subscription_id)
-            return list(client.azure_firewalls.list(resource_group))
-        except Exception as exc:
-            logger.error("get_azure_firewalls(%s) failed: %s", resource_group, exc)
             return []
 
     def get_vnet_peerings(self, resource_group: str, vnet_name: str) -> List[Any]:
